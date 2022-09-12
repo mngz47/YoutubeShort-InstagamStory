@@ -1,0 +1,113 @@
+//File download api for shorts
+//Receiving simple data from other apps
+//https://developer.android.com/training/sharing/receive#java
+
+
+<activity android:name=".ui.MyActivity" >
+    <intent-filter>
+        <action android:name="android.intent.action.SEND" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:mimeType="image/*" />
+    </intent-filter>
+    <intent-filter>
+        <action android:name="android.intent.action.SEND" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:mimeType="text/plain" />
+    </intent-filter>
+    <intent-filter>
+        <action android:name="android.intent.action.SEND_MULTIPLE" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:mimeType="image/*" />
+    </intent-filter>
+</activity>
+
+
+//____________________________________
+
+
+void onCreate (Bundle savedInstanceState) {
+    ...
+    // Get intent, action and MIME type
+    Intent intent = getIntent();
+    String action = intent.getAction();
+    String type = intent.getType();
+
+    if (Intent.ACTION_SEND.equals(action) && type != null) {
+        if ("text/plain".equals(type)) {
+            handleSendText(intent); // Handle text being sent
+        } else if (type.startsWith("image/")) {
+            handleSendImage(intent); // Handle single image being sent
+        }
+    } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+        if (type.startsWith("image/")) {
+            handleSendMultipleImages(intent); // Handle multiple images being sent
+        }
+    } else {
+        // Handle other intents, such as being started from the home screen
+    }
+    ...
+}
+
+void handleSendText(Intent intent) {
+    String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+    if (sharedText != null) {
+        // Update UI to reflect text being shared
+    }
+}
+
+void handleSendImage(Intent intent) {
+    Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+    if (imageUri != null) {
+        // Update UI to reflect image being shared
+    }
+}
+
+void handleSendMultipleImages(Intent intent) {
+    ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+    if (imageUris != null) {
+        // Update UI to reflect multiple images being shared
+    }
+}
+
+
+
+
+
+//______________________________________
+//Send API
+//Send content by invoking an implicit intent with action send
+
+final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+shareIntent.setType("image/jpg");
+final File photoFile = new File(getFilesDir(), "foo.jpg");
+shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(photoFile));
+startActivity(Intent.createChooser(shareIntent, "Share image using" ));
+
+
+
+
+// https://developers.facebook.com/docs/instagram/sharing-to-stories/
+
+Uri stickerAssetUri = Uri.parse("your-image-asset-uri-goes-here");
+String sourceApplication = "com.my.app";
+
+// Instantiate implicit intent with ADD_TO_STORY action,
+// sticker asset, and background colors
+Intent intent = new Intent("com.instagram.share.ADD_TO_STORY");
+intent.putExtra("source_application", sourceApplication);
+
+intent.setType(MEDIA_TYPE_JPEG);
+intent.putExtra("interactive_asset_uri", stickerAssetUri);
+intent.putExtra("top_background_color", "#33FF33");
+intent.putExtra("bottom_background_color", "#FF00FF");
+
+// Instantiate activity and verify it will resolve implicit intent
+Activity activity = getActivity();
+activity.grantUriPermission(
+    "com.instagram.android", stickerAssetUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+if (activity.getPackageManager().resolveActivity(intent, 0) != null) {
+  activity.startActivityForResult(intent, 0);
+}
+
+
+//______________________________________________________________________
