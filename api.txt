@@ -106,6 +106,10 @@ public class YTD {
             <artifactId>vget</artifactId>
             <version>1.1.33</version>
         </dependency>
+        
+        id 'com.github.axet' version '1.1.33' apply false
+        
+        https://stackoverflow.com/questions/35972924/how-to-download-libraries-in-android-studio
 
 //______________________________________
 //Send API
