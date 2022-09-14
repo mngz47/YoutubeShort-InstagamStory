@@ -1,0 +1,29 @@
+
+
+
+configurations {
+    all*.exclude group: 'xpp3', module: 'xpp3'
+}
+
+
+configurations {
+    all*.exclude group: 'xmlpull', module: 'xmlpull'
+}
+
+implementation 'xmlpull:xmlpull:1.1.3.4d_b4_min'
+
+_________________________________
+
+Use previous stable release of gradle
+______________________________
+
+
+  packagingOptions {
+            exclude 'META-INF/DEPENDENCIES.txt'
+            exclude 'META-INF/NOTICE'
+            exclude 'META-INF/NOTICE.txt'
+            exclude 'META-INF/LICENSE'
+            exclude 'META-INF/LICENSE.txt'
+    }
+
+https://developer.android.com/studio/build/dependencies#resolution_errors
